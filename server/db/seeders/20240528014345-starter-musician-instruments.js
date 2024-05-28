@@ -1,5 +1,6 @@
 'use strict';
 const { Musician, Instrument } = require('../models');
+const { Op } = require('sequelize');
 
 const MusicianInstruments = [
   {
@@ -59,8 +60,8 @@ module.exports = {
     for(let i = 0; i < MusicianInstruments.length; i++){
       const {musician, instruments} = MusicianInstruments[i];
 
-      const music = await Musician.findOne({where: {musician}})
-      const tools = await Instrument.findAll({where:{$or: instruments}})
+      const music = await Musician.findOne({where: musician})
+      const tools = await Instrument.findAll({where:{[Op.or]: instruments}})
       
       await music.addInstruments(tools)
       
@@ -72,9 +73,9 @@ module.exports = {
       const { musician, instruments } = MusicianInstruments[i];
 
       const music = await Musician.findOne({ where: { musician } });
-      const tools = await Instrument.findAll({ where: { $or: instruments } });
+      const tools = await Instrument.findAll({ where: { [Op.or]: instruments } });
 
-      await music.remvoveInstruments(tools);
+      await music.removeInstruments(tools);
     }
   }
 };
